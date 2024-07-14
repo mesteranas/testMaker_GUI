@@ -15,6 +15,7 @@ class main (qt.QMainWindow):
         self.setWindowTitle(app.name + _("version : ") + str(app.version))
         layout=qt.QVBoxLayout()
         self.startNewTest=guiTools.QPushButton(_("start new test"))
+        self.startNewTest.clicked.connect(self.onStartTest)
         layout.addWidget(self.startNewTest)
         self.questionManiger=guiTools.QPushButton(_("question manager"))
         self.questionManiger.clicked.connect(lambda:gui.CategoryManiger(self))
@@ -74,7 +75,17 @@ class main (qt.QMainWindow):
                 event.ignore()
         else:
             self.close()
-
+    def onStartTest(self):
+        """
+        this define for "start test" button
+        this one makes you to choose catgory and check if this one has questions or no then open test widget   
+        """
+        data:dict=gui.jsonControl.get()
+        choice,ok=qt.QInputDialog.getItem(self,_("category selecter"),_("choose a category"),data.keys(),0,False)
+        if ok:
+            count,ok=qt.QInputDialog.getInt(self,_("questions count"),_("type questions count"),10,5,1000)
+            if ok:
+                gui.MakeTests(self,data[choice],count).exec()
 App=qt.QApplication([])
 w=main()
 w.show()
